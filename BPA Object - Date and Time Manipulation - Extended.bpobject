@@ -1,0 +1,271 @@
+﻿<process name="TA - Date and Time Manipulation" version="1.0" bpversion="6.10.4.51738" narrative="This object is created for date and time manipulation." byrefcollection="true" type="object" runmode="Exclusive" preferredid="45c02daf-7b32-443d-beec-49cd38b6d42e">
+  <appdef>
+    <element name="Application Root">
+      <id>04502130-84f4-467b-af3a-c8d14881c9a1</id>
+      <type>Application</type>
+      <basetype>Application</basetype>
+      <datatype>unknown</datatype>
+      <diagnose>False</diagnose>
+    </element>
+  </appdef>
+  <view>
+    <camerax>0</camerax>
+    <cameray>0</cameray>
+    <zoom version="2">1.25</zoom>
+  </view>
+  <preconditions />
+  <endpoint narrative="" />
+  <subsheet subsheetid="5f868ec0-1a03-46c4-91c0-5fdbc790809b" type="CleanUp" published="True">
+    <name>Clean Up</name>
+    <view>
+      <camerax>0</camerax>
+      <cameray>0</cameray>
+      <zoom version="2">1.25</zoom>
+    </view>
+  </subsheet>
+  <subsheet subsheetid="8a68d71b-68ba-47cb-a44d-45f26136ea11" type="Normal" published="True">
+    <name>Min Date and Max Date</name>
+    <view>
+      <camerax>0</camerax>
+      <cameray>0</cameray>
+      <zoom version="2">1.25</zoom>
+    </view>
+  </subsheet>
+  <subsheet subsheetid="f3ef2e37-0466-4ddb-bc8c-1072f96f7e54" type="Normal" published="True">
+    <name>Get Last Week Dates</name>
+    <view>
+      <camerax>0</camerax>
+      <cameray>0</cameray>
+      <zoom version="2">1.25</zoom>
+    </view>
+  </subsheet>
+  <stage stageid="026cd51a-6505-4d11-8913-d5b6fbfe143c" name="Start" type="Start">
+    <loginhibit />
+    <display x="-15" y="-135" />
+    <onsuccess>16c96f26-dccd-43ea-9163-88fc4fe5f6ab</onsuccess>
+  </stage>
+  <stage stageid="16c96f26-dccd-43ea-9163-88fc4fe5f6ab" name="End" type="End">
+    <loginhibit />
+    <display x="-15" y="60" />
+  </stage>
+  <stage stageid="e534d739-2176-4eaa-bd3e-0a832d34cdbd" name="Stage1" type="ProcessInfo">
+    <display x="-195" y="-105" w="150" h="90" />
+    <references>
+      <reference>System.dll</reference>
+      <reference>System.Data.dll</reference>
+      <reference>System.Xml.dll</reference>
+      <reference>System.Drawing.dll</reference>
+      <reference>System.Core.dll</reference>
+      <reference>System.Data.DataSetExtensions.dll</reference>
+    </references>
+    <imports>
+      <import>System</import>
+      <import>System.Drawing</import>
+      <import>System.Data</import>
+      <import>System.Collections.Generic</import>
+      <import>System.Linq</import>
+      <import>System.Data.DataSetExtensions</import>
+    </imports>
+    <language>csharp</language>
+    <globalcode><![CDATA[]]></globalcode>
+    <code><![CDATA[public DataTable GetLastWeekDates()
+{
+    // Get the current date
+    DateTime currentDate = DateTime.Now;
+    // Get the date of the last full week
+    DateTime lastFullWeekDate = currentDate.AddDays(-(int)currentDate.DayOfWeek - 7);
+    // Get the first day of the last week
+    DateTime firstDayOfLastWeek = lastFullWeekDate.AddDays(-(int)lastFullWeekDate.DayOfWeek);
+    // Create a DataTable to store the dates of the last week
+    DataTable lastWeekDatesTable = new DataTable();
+    lastWeekDatesTable.Columns.Add("Date", typeof(DateTime));
+    // Iterate through the days of the week
+    for (int i = 0; i < 7; i++)
+    {
+        // Add the date to the DataTable
+        lastWeekDatesTable.Rows.Add(firstDayOfLastWeek.AddDays(i));
+    }
+    return lastWeekDatesTable;
+}
+
+public static class DateTimeExtensions
+    {
+        public static Tuple<DateTime, DateTime> GetMinMaxDatesFromDataTable(DataTable dataTable, string dateColumnName)
+        {
+            // Get the dates from the specified column
+            var dates = from row in dataTable.AsEnumerable()
+                        select row.Field<DateTime>(dateColumnName);
+
+            // Get the minimum and maximum dates
+            DateTime minDate = dates.Min();
+            DateTime maxDate = dates.Max();
+
+            return new Tuple<DateTime, DateTime>(minDate, maxDate);
+        }
+    }]]></code>
+  </stage>
+  <stage stageid="e235851f-1251-40b7-9a90-1492f8fcf385" name="Clean Up" type="SubSheetInfo">
+    <subsheetid>5f868ec0-1a03-46c4-91c0-5fdbc790809b</subsheetid>
+    <display x="-195" y="-105" w="150" h="90" />
+  </stage>
+  <stage stageid="5234a2ad-1432-4dfc-b61e-9cb6e6b9e67f" name="Start" type="Start">
+    <subsheetid>5f868ec0-1a03-46c4-91c0-5fdbc790809b</subsheetid>
+    <loginhibit />
+    <display x="15" y="-105" />
+    <onsuccess>f52e3a1c-d850-4ca4-9388-e64e06da3f2e</onsuccess>
+  </stage>
+  <stage stageid="f52e3a1c-d850-4ca4-9388-e64e06da3f2e" name="End" type="End">
+    <subsheetid>5f868ec0-1a03-46c4-91c0-5fdbc790809b</subsheetid>
+    <loginhibit />
+    <display x="15" y="90" />
+  </stage>
+  <stage stageid="bf391448-f8a2-4b55-8233-d304e657eb4d" name="Get Last Week Dates" type="SubSheetInfo">
+    <subsheetid>f3ef2e37-0466-4ddb-bc8c-1072f96f7e54</subsheetid>
+    <narrative>This code stage will get the last week dates in a collection.</narrative>
+    <display x="-195" y="-105" w="150" h="90" />
+  </stage>
+  <stage stageid="533fb458-7ea4-4227-aa6a-08f88fa80e6f" name="Start" type="Start">
+    <subsheetid>f3ef2e37-0466-4ddb-bc8c-1072f96f7e54</subsheetid>
+    <loginhibit />
+    <display x="0" y="-135" w="90" h="30" />
+    <onsuccess>c83d16c1-02fe-4f97-a9a6-69c4cb3699b3</onsuccess>
+  </stage>
+  <stage stageid="f6286fdd-caee-49be-b036-bd11ab55891a" name="End" type="End">
+    <subsheetid>f3ef2e37-0466-4ddb-bc8c-1072f96f7e54</subsheetid>
+    <loginhibit />
+    <display x="0" y="-45" w="90" h="30" />
+    <outputs>
+      <output type="collection" name="Last Week Dates" narrative="lastWeekDatesCollection" stage="lastWeekDatesCollection" />
+    </outputs>
+  </stage>
+  <stage stageid="16e659e4-77ab-44fb-8ea4-6167b30126eb" name="Note1" type="Note">
+    <subsheetid>5f868ec0-1a03-46c4-91c0-5fdbc790809b</subsheetid>
+    <narrative>Clean Up Page
+
+This is an optional page where you might choose to perform some finalisation (or "cleanup") tasks as your business object is closed down.
+
+The cleanup action will be called automatically immediately after closing your business object at the end of a business process.
+
+You will not be able to call this action from a business process, nor will it be called at any other time than before the disposal of the business object.</narrative>
+    <display x="-180" y="60" w="180" h="230" />
+  </stage>
+  <stage stageid="fb9dc18d-f415-453d-a9e3-ee60e4095b1c" name="Note2" type="Note">
+    <narrative>Initialise Page
+
+This is an optional page where you might choose to perform some initialisation tasks after your business object is loaded.
+
+The initialise action will be called automatically immediately after loading your business object.
+
+You will not be able to call this action from a business process, nor will it be called at any other time than after the creation of the object.</narrative>
+    <display x="-180" y="60" w="180" h="230" />
+  </stage>
+  <stage stageid="c83d16c1-02fe-4f97-a9a6-69c4cb3699b3" name="Get Last Week Dates" type="Code">
+    <subsheetid>f3ef2e37-0466-4ddb-bc8c-1072f96f7e54</subsheetid>
+    <loginhibit />
+    <display x="0" y="-90" w="90" h="30" />
+    <outputs>
+      <output type="collection" name="lastWeekDatesTable" stage="lastWeekDatesCollection" />
+    </outputs>
+    <onsuccess>f6286fdd-caee-49be-b036-bd11ab55891a</onsuccess>
+    <code><![CDATA[lastWeekDatesTable = GetLastWeekDates();]]></code>
+  </stage>
+  <stage stageid="35a71b4c-2f2b-4424-9a8b-0c84a68245b8" name="lastWeekDatesCollection" type="Collection">
+    <subsheetid>f3ef2e37-0466-4ddb-bc8c-1072f96f7e54</subsheetid>
+    <display x="-195" y="0" w="150" h="60" />
+    <datatype>collection</datatype>
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="fe30c415-9a03-4b45-96ac-f3af3181b9ed" name="Output Variable" type="Block">
+    <subsheetid>f3ef2e37-0466-4ddb-bc8c-1072f96f7e54</subsheetid>
+    <loginhibit />
+    <display x="-270" y="-45" w="150" h="75" />
+    <font family="Segoe UI" size="10" style="Regular" color="339966" />
+  </stage>
+  <stage stageid="c141ed1b-91bb-4c26-9a7c-a86e05384a34" name="Min Date and Max Date" type="SubSheetInfo">
+    <subsheetid>8a68d71b-68ba-47cb-a44d-45f26136ea11</subsheetid>
+    <narrative>This object will get the min and max date in a given input collection.</narrative>
+    <display x="-195" y="-105" w="150" h="90" />
+  </stage>
+  <stage stageid="0ebdceab-f24d-461f-88a1-9f50bfa350b0" name="Start" type="Start">
+    <subsheetid>8a68d71b-68ba-47cb-a44d-45f26136ea11</subsheetid>
+    <loginhibit />
+    <display x="-15" y="-135" w="90" h="30" />
+    <inputs>
+      <input type="collection" name="Date Collection" narrative="Date Collection" stage="Date Collection" />
+      <input type="text" name="Collection Column Name" narrative="Collection Column Name" stage="Collection Column Name" />
+    </inputs>
+    <onsuccess>25740486-054e-401e-a8f9-c9fac3b89bcb</onsuccess>
+  </stage>
+  <stage stageid="65f7bfb7-4d4f-442a-a401-320d382b5d33" name="End" type="End">
+    <subsheetid>8a68d71b-68ba-47cb-a44d-45f26136ea11</subsheetid>
+    <loginhibit />
+    <display x="-15" y="-45" w="90" h="30" />
+    <outputs>
+      <output type="datetime" name="minDate" narrative="minDate" stage="minDate" />
+      <output type="datetime" name="maxDate" narrative="maxDate" stage="maxDate" />
+    </outputs>
+  </stage>
+  <stage stageid="25740486-054e-401e-a8f9-c9fac3b89bcb" name="Min Max Date" type="Code">
+    <subsheetid>8a68d71b-68ba-47cb-a44d-45f26136ea11</subsheetid>
+    <loginhibit />
+    <display x="-15" y="-90" w="90" h="30" />
+    <inputs>
+      <input type="collection" name="dataTable" expr="[Date Collection]" />
+      <input type="text" name="dateColumnName" expr="[Collection Column Name]" />
+    </inputs>
+    <outputs>
+      <output type="datetime" name="minDate" stage="minDate" />
+      <output type="datetime" name="maxDate" stage="maxDate" />
+    </outputs>
+    <onsuccess>65f7bfb7-4d4f-442a-a401-320d382b5d33</onsuccess>
+    <code><![CDATA[Tuple<DateTime, DateTime> minMaxDates = DateTimeExtensions.GetMinMaxDatesFromDataTable(dataTable, dateColumnName);
+
+minDate = minMaxDates.Item1;
+maxDate = minMaxDates.Item2;
+]]></code>
+  </stage>
+  <stage stageid="2207963b-3a30-47c4-8e2f-3546ed82e8da" name="minDate" type="Data">
+    <subsheetid>8a68d71b-68ba-47cb-a44d-45f26136ea11</subsheetid>
+    <display x="-195" y="75" w="150" h="30" />
+    <datatype>datetime</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="ca02e9f3-3002-405f-881b-823215bc15ca" name="maxDate" type="Data">
+    <subsheetid>8a68d71b-68ba-47cb-a44d-45f26136ea11</subsheetid>
+    <display x="-195" y="105" w="150" h="30" />
+    <datatype>datetime</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="34b29b68-b233-417f-8acc-faa91f581edf" name="Collection Column Name" type="Data">
+    <subsheetid>8a68d71b-68ba-47cb-a44d-45f26136ea11</subsheetid>
+    <display x="-195" y="15" w="150" h="30" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="2b0088b0-e3b8-4d49-883d-b2e4b4216b7f" name="Date Collection" type="Collection">
+    <subsheetid>8a68d71b-68ba-47cb-a44d-45f26136ea11</subsheetid>
+    <display x="-195" y="-15" w="150" h="30" />
+    <datatype>collection</datatype>
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="c93d5ab9-7806-4eaf-8071-0dd8a9d76e1d" name="Output Variable" type="Block">
+    <subsheetid>8a68d71b-68ba-47cb-a44d-45f26136ea11</subsheetid>
+    <loginhibit />
+    <display x="-270" y="45" w="150" h="75" />
+    <font family="Segoe UI" size="10" style="Regular" color="339966" />
+  </stage>
+  <stage stageid="d30357db-5f7e-4329-a777-45f1ee8bbf0a" name="Input Variables" type="Block">
+    <subsheetid>8a68d71b-68ba-47cb-a44d-45f26136ea11</subsheetid>
+    <loginhibit />
+    <display x="-270" y="-45" w="150" h="75" />
+    <font family="Segoe UI" size="10" style="Regular" color="FFFF99" />
+  </stage>
+</process>
